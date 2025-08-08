@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,8 +38,12 @@ const RegisterPage = () => {
       setIsLoading(true);
       await signUp(email, password);
       navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to create account");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to create account");
+      } else {
+        setError("Failed to create account");
+      }
     } finally {
       setIsLoading(false);
     }
