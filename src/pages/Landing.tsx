@@ -14,12 +14,13 @@ const LandingPage = () => {
   return (
     <MainLayout>
       {/* Hero section */}
-      <section className="bg-gradient-to-b from-white to-secondary py-16 md:py-24">
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 -z-10 animate-gradient bg-gradient-to-br from-primary/10 via-secondary/30 to-white" />
         <div className="container px-4 md:px-6 flex flex-col items-center text-center">
           <div className="flex items-center justify-center p-2 bg-secondary rounded-full mb-4 animate-bounce">
             <LinkIcon className="h-5 w-5 text-primary" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4 font-poppins">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4 font-poppins drop-shadow-lg">
             Short Links, <span className="text-primary">Big Impact</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-[700px] mb-8 font-inter">
@@ -59,9 +60,11 @@ const LandingPage = () => {
               Join <span className="text-primary font-bold">{totalUsers}</span> users already using Redestiny
             </p>
           </div>
+         
         </div>
       </section>
 
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-muted to-transparent my-12" />
       {/* Features section */}
       <section className="py-16 md:py-24">
         <div className="container px-4 md:px-6">
@@ -74,7 +77,7 @@ const LandingPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-lg hover:-translate-y-2 hover:scale-105">
               <div className="p-3 rounded-full bg-secondary mb-4">
                 <LinkIcon className="h-6 w-6 text-primary" />
               </div>
@@ -85,7 +88,7 @@ const LandingPage = () => {
             </div>
             
             {/* Feature 2 */}
-            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-lg hover:-translate-y-2 hover:scale-105">
               <div className="p-3 rounded-full bg-secondary mb-4">
                 <BarChart className="h-6 w-6 text-primary" />
               </div>
@@ -96,7 +99,7 @@ const LandingPage = () => {
             </div>
             
             {/* Feature 3 */}
-            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div className="feature-card flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-sm border transform transition-all duration-300 hover:shadow-lg hover:-translate-y-2 hover:scale-105">
               <div className="p-3 rounded-full bg-secondary mb-4">
                 <Clock className="h-6 w-6 text-primary" />
               </div>
@@ -109,10 +112,12 @@ const LandingPage = () => {
         </div>
       </section>
 
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-muted to-transparent my-12" />
       {/* CTA section */}
-      <section className="bg-primary py-16">
+      <section className="relative py-16 bg-gradient-to-br from-primary to-primary/80 shadow-xl">
+        <div className="absolute inset-0 -z-10 opacity-30 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/40 via-primary/30 to-primary" />
         <div className="container px-4 md:px-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 font-poppins">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 font-poppins drop-shadow-lg">
             Ready to Shorten Your URLs?
           </h2>
           <p className="text-primary-foreground/90 max-w-[700px] mx-auto mb-8 font-inter">
@@ -123,7 +128,7 @@ const LandingPage = () => {
               asChild 
               size="lg" 
               variant="secondary" 
-              className="animate-bounce"
+              className="animate-bounce shadow-lg"
               onClick={() => setIsAuthModalOpen(true)}
             >
               <div>Create Your Free Account</div>
