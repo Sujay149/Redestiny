@@ -17,7 +17,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/urls'
 
 // Create a new short URL
 export const createShortUrl = async (
-  userId: string,
+  userEmail: string,
   originalUrl: string,
   domain: string = 'short.ly',
   customShortCode?: string,
@@ -26,15 +26,15 @@ export const createShortUrl = async (
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, originalUrl, domain, shortCode: customShortCode, expiresAt })
+    body: JSON.stringify({ userId: userEmail, originalUrl, domain, shortCode: customShortCode, expiresAt })
   });
   if (!res.ok) throw new Error((await res.json()).error || 'Failed to create URL');
   return await res.json();
 };
 
 // Get all URLs for a specific user
-export const getUserUrls = async (userId: string): Promise<UrlData[]> => {
-  const res = await fetch(`${API_URL}/user/${userId}`);
+export const getUserUrls = async (userEmail: string): Promise<UrlData[]> => {
+  const res = await fetch(`${API_URL}/user/${userEmail}`);
   if (!res.ok) throw new Error((await res.json()).error || 'Failed to fetch URLs');
   return await res.json();
 };

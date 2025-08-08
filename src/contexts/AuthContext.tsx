@@ -128,18 +128,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      // Mock Google sign in - replace with Supabase auth when connected
-      // Always use the same email for demo; in real app, use Google profile email
-      const email = 'demo-google-user@gmail.com';
-      const googleUser = { 
-        id: email, // Use email as unique ID for Google users
-        email,
-        provider: 'google'
-      };
-      localStorage.setItem('snappy_user', JSON.stringify(googleUser));
-      setUser(googleUser);
-      // Add to all users list
-      addUserToStorage(googleUser);
+      // Open backend Google OAuth endpoint in a popup
+      const popup = window.open(
+        `${import.meta.env.VITE_API_URL?.replace('/api/urls', '') || 'http://localhost:5000'}/api/auth/google`,
+        'google-oauth',
+        'width=500,height=600'
+      );
+      if (!popup) throw new Error('Failed to open Google sign-in window');
+
+      // Listen for message from popup
+      const userFromOAuth: Promise<any> = new Promise((resolve, reject) => {
+        const timer = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(timer);
+            reject(new Error('Google sign-in was closed'));
+          }
+        }, 500);
+        window.addEventListener('message', function handler(event) {
+          if (event.origin !== window.location.origin) return;
+          if (event.data && event.data.type === 'google-auth-success') {
+            clearInterval(timer);
+            window.removeEventListener('message', handler);
+            popup.close();
+            resolve(event.data.user);
+          }
+        });
+      });
+      const user = await userFromOAuth;
+      if (!user || !user.email) throw new Error('Failed to get user info from Google');
+      localStorage.setItem('snappy_user', JSON.stringify(user));
+      setUser(user);
+      addUserToStorage(user);
       toast.success('Logged in with Google successfully!');
     } catch (error: unknown) {
       if (error instanceof Error) {

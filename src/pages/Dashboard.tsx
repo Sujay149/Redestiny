@@ -46,7 +46,7 @@ import {
 import { domains, isValidUrl, formatUrlForDisplay, formatDate, getFullShortUrl } from "@/utils/url-utils";
 
 const DashboardPage = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [urls, setUrls] = useState<UrlData[]>([]);
   const [loading, setLoading] = useState(true);
   const [longUrl, setLongUrl] = useState("");
@@ -61,7 +61,7 @@ const DashboardPage = () => {
     if (!user) return;
     try {
       setLoading(true);
-      const userUrls = await getUserUrls(user.id);
+      const userUrls = await getUserUrls(user.email);
       setUrls(userUrls);
     } catch (error) {
       console.error("Error fetching URLs:", error);
@@ -72,8 +72,10 @@ const DashboardPage = () => {
   };
 
   useEffect(() => {
-    fetchUrls();
-  }, [user]);
+    if (!authLoading && user) {
+      fetchUrls();
+    }
+  }, [user, authLoading]);
 
   // Handle URL shortening
   const handleCreateShortUrl = async (e: React.FormEvent) => {
@@ -93,7 +95,7 @@ const DashboardPage = () => {
     try {
       setIsSubmitting(true);
       const newUrl = await createShortUrl(
-        user.id,
+        user.email,
         longUrl,
         selectedDomain,
         shortCode || undefined
@@ -158,6 +160,27 @@ const DashboardPage = () => {
     navigator.clipboard.writeText(shortUrl);
     toast.success("URL copied to clipboard");
   };
+
+  if (authLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (!user) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+          <h2 className="text-2xl font-bold mb-4">You must be logged in to use the dashboard.</h2>
+          <p className="text-muted-foreground mb-6">Please log in or sign up to manage your short URLs.</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -249,7 +272,6 @@ const DashboardPage = () => {
                   <TableBody>
                     {urls.map((url) => {
                       const fullShortUrl = getFullShortUrl(url.shortCode, url.domain);
-                      
                       return (
                         <TableRow key={url.id}>
                           <TableCell className="font-medium">
