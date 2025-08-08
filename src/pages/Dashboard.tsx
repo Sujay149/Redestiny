@@ -78,29 +78,28 @@ const DashboardPage = () => {
   // Handle URL shortening
   const handleCreateShortUrl = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!user || !user.id) {
+      toast.error("You must be logged in to create a short URL.");
+      return;
+    }
     if (!longUrl) {
       toast.error("Please enter a URL to shorten");
       return;
     }
-    
     if (!isValidUrl(longUrl)) {
       toast.error("Please enter a valid URL including http:// or https://");
       return;
     }
-    
     try {
       setIsSubmitting(true);
       const newUrl = await createShortUrl(
-        user!.id,
+        user.id,
         longUrl,
         selectedDomain,
         shortCode || undefined
       );
-      
       toast.success("URL shortened successfully!");
       setUrls([newUrl, ...urls]);
-      
       // Reset form
       setLongUrl("");
       setShortCode("");

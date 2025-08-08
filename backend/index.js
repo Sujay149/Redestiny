@@ -6,6 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import oauthRoutes from './routes/oauth.js';
+import urlRoutes from './routes/url.js';
 import passport from './passport.js';
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', oauthRoutes);
+app.use('/api/urls', urlRoutes);
 
 const PORT = process.env.PORT || 5000;
 

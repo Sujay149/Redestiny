@@ -129,17 +129,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       // Mock Google sign in - replace with Supabase auth when connected
+      // Always use the same email for demo; in real app, use Google profile email
+      const email = 'demo-google-user@gmail.com';
       const googleUser = { 
-        id: `google_user_${Date.now()}`, 
-        email: `user${Date.now()}@gmail.com`,
+        id: email, // Use email as unique ID for Google users
+        email,
         provider: 'google'
       };
       localStorage.setItem('snappy_user', JSON.stringify(googleUser));
       setUser(googleUser);
-      
       // Add to all users list
       addUserToStorage(googleUser);
-      
       toast.success('Logged in with Google successfully!');
     } catch (error: unknown) {
       if (error instanceof Error) {

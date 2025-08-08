@@ -1,5 +1,5 @@
 
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 export interface UrlData {
   id: string;
@@ -12,29 +12,8 @@ export interface UrlData {
   expiresAt?: string | null;
 }
 
-// Will be replaced with Supabase database calls
-const STORAGE_KEY = 'snappy_urls';
 
-// Helper to get URLs from localStorage
-const getUrlsFromStorage = (): UrlData[] => {
-  const storedUrls = localStorage.getItem(STORAGE_KEY);
-  return storedUrls ? JSON.parse(storedUrls) : [];
-};
-
-// Helper to save URLs to localStorage
-const saveUrlsToStorage = (urls: UrlData[]): void => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
-};
-
-// Generate a random short code
-const generateShortCode = (length = 6): string => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/urls';
 
 // Create a new short URL
 export const createShortUrl = async (
@@ -44,62 +23,34 @@ export const createShortUrl = async (
   customShortCode?: string,
   expiresAt?: string
 ): Promise<UrlData> => {
-  const urls = getUrlsFromStorage();
-  
-  // Use custom code or generate a random one
-  const shortCode = customShortCode || generateShortCode();
-  
-  // Check if custom code is already in use
-  if (customShortCode) {
-    const exists = urls.some(url => url.shortCode === customShortCode);
-    if (exists) {
-      throw new Error('This custom short code is already in use');
-    }
-  }
-  
-  const newUrl: UrlData = {
-    id: uuidv4(),
-    userId,
-    originalUrl,
-    shortCode,
-    domain,
-    clicks: 0,
-    createdAt: new Date().toISOString(),
-    expiresAt: expiresAt || null
-  };
-  
-  urls.push(newUrl);
-  saveUrlsToStorage(urls);
-  
-  return newUrl;
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, originalUrl, domain, shortCode: customShortCode, expiresAt })
+  });
+  if (!res.ok) throw new Error((await res.json()).error || 'Failed to create URL');
+  return await res.json();
 };
 
 // Get all URLs for a specific user
 export const getUserUrls = async (userId: string): Promise<UrlData[]> => {
-  const urls = getUrlsFromStorage();
-  return urls.filter(url => url.userId === userId);
+  const res = await fetch(`${API_URL}/user/${userId}`);
+  if (!res.ok) throw new Error((await res.json()).error || 'Failed to fetch URLs');
+  return await res.json();
 };
 
 // Get a URL by its short code
+// Not used in dashboard, implement if needed for redirects
 export const getUrlByShortCode = async (shortCode: string): Promise<UrlData | null> => {
-  const urls = getUrlsFromStorage();
-  const url = urls.find(url => url.shortCode === shortCode);
-  return url || null;
+  // Not implemented for Atlas yet
+  return null;
 };
 
 // Update a URL's click count
+// Not used in dashboard, implement if needed for analytics
 export const incrementUrlClicks = async (id: string): Promise<UrlData | null> => {
-  const urls = getUrlsFromStorage();
-  const urlIndex = urls.findIndex(url => url.id === id);
-  
-  if (urlIndex === -1) {
-    return null;
-  }
-  
-  urls[urlIndex].clicks += 1;
-  saveUrlsToStorage(urls);
-  
-  return urls[urlIndex];
+  // Not implemented for Atlas yet
+  return null;
 };
 
 // Update a URL
@@ -107,40 +58,18 @@ export const updateUrl = async (
   id: string,
   updates: Partial<Pick<UrlData, 'originalUrl' | 'shortCode' | 'domain' | 'expiresAt'>>
 ): Promise<UrlData | null> => {
-  const urls = getUrlsFromStorage();
-  const urlIndex = urls.findIndex(url => url.id === id);
-  
-  if (urlIndex === -1) {
-    return null;
-  }
-  
-  // Check if trying to update to an existing short code
-  if (updates.shortCode && updates.shortCode !== urls[urlIndex].shortCode) {
-    const exists = urls.some(url => url.shortCode === updates.shortCode);
-    if (exists) {
-      throw new Error('This custom short code is already in use');
-    }
-  }
-  
-  urls[urlIndex] = {
-    ...urls[urlIndex],
-    ...updates
-  };
-  
-  saveUrlsToStorage(urls);
-  
-  return urls[urlIndex];
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates)
+  });
+  if (!res.ok) throw new Error((await res.json()).error || 'Failed to update URL');
+  return await res.json();
 };
 
 // Delete a URL
 export const deleteUrl = async (id: string): Promise<boolean> => {
-  const urls = getUrlsFromStorage();
-  const filteredUrls = urls.filter(url => url.id !== id);
-  
-  if (filteredUrls.length === urls.length) {
-    return false; // URL with this ID not found
-  }
-  
-  saveUrlsToStorage(filteredUrls);
+  const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error((await res.json()).error || 'Failed to delete URL');
   return true;
 };
