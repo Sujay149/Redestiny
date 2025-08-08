@@ -26,7 +26,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-2">
             <LinkIcon className="h-6 w-6 text-primary" />
             <Link to="/" className="font-bold text-xl text-brand-darkBlack">
-              Snappy.Link
+              Redestiny
             </Link>
           </div>
           
@@ -69,7 +69,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <footer className="border-t py-6 md:py-8">
         <div className="container flex flex-col items-center justify-between gap-4 px-4 md:flex-row md:px-6">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Snappy.Link. All rights reserved.
+            &copy; {new Date().getFullYear()} Redestiny. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <Link to="#" className="text-sm text-muted-foreground hover:text-foreground">

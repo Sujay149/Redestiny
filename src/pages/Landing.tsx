@@ -56,7 +56,7 @@ const LandingPage = () => {
           <div className="mt-12 flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border animate-pulse">
             <Users className="h-4 w-4 text-primary" />
             <p className="text-sm font-medium">
-              Join <span className="text-primary font-bold">{totalUsers}</span> users already using Snappy.Link
+              Join <span className="text-primary font-bold">{totalUsers}</span> users already using Redestiny
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ const LandingPage = () => {
             Ready to Shorten Your URLs?
           </h2>
           <p className="text-primary-foreground/90 max-w-[700px] mx-auto mb-8 font-inter">
-            Join thousands of users who trust Snappy.Link for their URL shortening needs.
+            Join thousands of users who trust Redestiny for their URL shortening needs.
           </p>
           {!user && (
             <Button 

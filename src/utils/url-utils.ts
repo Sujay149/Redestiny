@@ -4,7 +4,7 @@ export const domains = [
   { value: 'short.ly', label: 'short.ly' },
   { value: 'vercel.app', label: 'vercel.app' },
   { value: 'web.app', label: 'web.app' },
-  { value: 'snappy.link', label: 'snappy.link' },
+  { value: 'Redestiny', label: 'Redestiny' },
 ];
 
 // Validate a URL

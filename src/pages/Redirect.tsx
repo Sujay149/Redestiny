@@ -69,7 +69,7 @@ const RedirectPage = () => {
       <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full text-center">
         <div className="mb-6">
           <LinkIcon className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Snappy.Link</h1>
+          <h1 className="text-2xl font-bold mb-2">Redestiny</h1>
         </div>
 
         {isLoading ? (

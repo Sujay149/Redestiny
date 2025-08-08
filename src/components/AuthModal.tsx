@@ -90,7 +90,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         <DialogHeader>
           <div className="flex items-center justify-center mb-4">
             <LinkIcon className="h-6 w-6 text-primary mr-2" />
-            <DialogTitle className="text-2xl font-bold">Snappy.Link</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">Redestiny</DialogTitle>
           </div>
           <DialogDescription className="text-center">
             Shorten, share, and track your links in one place

@@ -43,7 +43,7 @@ const LoginPage = () => {
           <div className="flex flex-col items-center text-center mb-8">
             <div className="flex items-center justify-center mb-4">
               <LinkIcon className="h-6 w-6 text-primary mr-2" />
-              <h1 className="text-2xl font-bold">Snappy.Link</h1>
+              <h1 className="text-2xl font-bold">Redestiny</h1>
             </div>
             <h2 className="text-2xl font-semibold mb-2">Welcome back</h2>
             <p className="text-muted-foreground">
