@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OAuth Success</title>
+</head>
+<body>
+  <script>
+    // Parse token, email, and photoURL from query params
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const email = params.get('email');
+    const photoURL = params.get('photoURL');
+    if (window.opener) {
+      window.opener.postMessage({ token, email, photoURL }, '*');
+      window.close();
+    } else {
+      document.body.innerText = 'OAuth success! Please close this window.';
+    }
+  </script>
+</body>
+</html>

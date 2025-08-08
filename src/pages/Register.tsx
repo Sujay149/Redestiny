@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOAuthLogin } from "@/hooks/useOAuthLogin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,16 @@ import { Link as LinkIcon } from "lucide-react";
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { signUp } = useAuth();
+  const { setUser } = useAuth();
+  const oAuthLogin = useOAuthLogin();
+  const handleOAuth = (provider: "google" | "github") => {
+    oAuthLogin(provider, ({ token, email, photoURL }) => {
+      localStorage.setItem("snappy_jwt", token);
+      localStorage.setItem("snappy_user", JSON.stringify({ email, photoURL }));
+      setUser({ id: "oauth", email, photoURL });
+      navigate("/dashboard");
+    });
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -110,6 +121,9 @@ const RegisterPage = () => {
             <Button className="w-full" type="submit" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
+            <div className="flex flex-col gap-2 mt-4">
+              <Button type="button" variant="outline" onClick={() => handleOAuth("google")}>Sign up with Google</Button>
+            </div>
           </form>
 
           <div className="mt-6 text-center text-sm">

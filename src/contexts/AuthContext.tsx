@@ -1,15 +1,18 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { signup as apiSignup, login as apiLogin } from '@/services/authApi';
 
 interface User {
   id: string;
   email: string;
   provider?: string;
+  photoURL?: string;
 }
 
 interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   loading: boolean;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
@@ -83,18 +86,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     try {
       setLoading(true);
-      // Mock signup - replace with Supabase auth when connected
-      const newUser = { id: `user_${Date.now()}`, email };
-      localStorage.setItem('snappy_user', JSON.stringify(newUser));
-      setUser(newUser);
-      
-      // Add to all users list
-      addUserToStorage(newUser);
-      
+      const res = await apiSignup(email, password);
+      localStorage.setItem('snappy_user', JSON.stringify(res.user));
+      localStorage.setItem('snappy_jwt', res.token);
+      setUser(res.user);
       toast.success('Account created successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign up');
-      throw error;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to sign up');
+        throw error;
+      } else {
+        toast.error('Failed to sign up');
+        throw new Error('Failed to sign up');
+      }
     } finally {
       setLoading(false);
     }
@@ -103,14 +107,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      // Mock login - replace with Supabase auth when connected
-      const mockUser = { id: `user_${Date.now()}`, email };
-      localStorage.setItem('snappy_user', JSON.stringify(mockUser));
-      setUser(mockUser);
+      const res = await apiLogin(email, password);
+      localStorage.setItem('snappy_user', JSON.stringify(res.user));
+      localStorage.setItem('snappy_jwt', res.token);
+      setUser(res.user);
       toast.success('Logged in successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in');
-      throw error;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to sign in');
+        throw error;
+      } else {
+        toast.error('Failed to sign in');
+        throw new Error('Failed to sign in');
+      }
     } finally {
       setLoading(false);
     }
@@ -132,9 +141,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addUserToStorage(googleUser);
       
       toast.success('Logged in with Google successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in with Google');
-      throw error;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to sign in with Google');
+        throw error;
+      } else {
+        toast.error('Failed to sign in with Google');
+        throw new Error('Failed to sign in with Google');
+      }
     } finally {
       setLoading(false);
     }
@@ -147,9 +161,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('snappy_user');
       setUser(null);
       toast.success('Logged out successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign out');
-      throw error;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Failed to sign out');
+        throw error;
+      } else {
+        toast.error('Failed to sign out');
+        throw new Error('Failed to sign out');
+      }
     } finally {
       setLoading(false);
     }
@@ -157,6 +176,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value = {
     user,
+    setUser,
     loading,
     signUp,
     signIn,

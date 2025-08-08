@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOAuthLogin } from "@/hooks/useOAuthLogin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,16 @@ import { toast } from "sonner";
 const LoginPage = () => {
   const navigate = useNavigate();
   const { signIn } = useAuth();
+  const { setUser } = useAuth();
+  const oAuthLogin = useOAuthLogin();
+  const handleOAuth = (provider: "google" | "github") => {
+    oAuthLogin(provider, ({ token, email, photoURL }) => {
+      localStorage.setItem("snappy_jwt", token);
+      localStorage.setItem("snappy_user", JSON.stringify({ email, photoURL }));
+      setUser({ id: "oauth", email, photoURL });
+      navigate("/dashboard");
+    });
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +40,12 @@ const LoginPage = () => {
       setIsLoading(true);
       await signIn(email, password);
       navigate("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to sign in");
+      } else {
+        setError("Failed to sign in");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +108,9 @@ const LoginPage = () => {
             <Button className="w-full" type="submit" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
+            <div className="flex flex-col gap-2 mt-4">
+              <Button type="button" variant="outline" onClick={() => handleOAuth("google")}>Sign in with Google</Button>
+            </div>
           </form>
 
           <div className="mt-6 text-center text-sm">
