@@ -1,10 +1,7 @@
 
 // Available domains for short URLs
 export const domains = [
-  { value: 'short.ly', label: 'short.ly' },
-  { value: 'vercel.app', label: 'vercel.app' },
-  { value: 'web.app', label: 'web.app' },
-  { value: 'Redestiny', label: 'Redestiny' },
+  { value: 'redestiny.vercel.app', label: 'redestiny.vercel.app' },
 ];
 
 // Validate a URL
@@ -51,6 +48,6 @@ export const formatDate = (isoDate: string): string => {
 
 // Generate a full short URL
 export const getFullShortUrl = (shortCode: string, domain: string): string => {
-  // In production, this would use the actual domain
-  return `${window.location.origin}/r/${shortCode}`;
+  // Always use the deployed domain for short URLs
+  return `https://redestiny.vercel.app/r/${shortCode}`;
 };
